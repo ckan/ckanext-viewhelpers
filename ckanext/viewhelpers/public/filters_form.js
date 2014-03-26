@@ -1,4 +1,4 @@
-ckan.module("basiccharts_filters_form", function (jQuery) {
+ckan.module("filters_form", function (jQuery) {
   "use strict";
 
   function applyDropdown(selectField, filterValues) {
