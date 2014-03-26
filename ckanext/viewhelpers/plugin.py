@@ -6,7 +6,7 @@ class ViewHelpers(p.SingletonPlugin):
     p.implements(p.IConfigurer, inherit=True)
 
     def update_config(self, config):
-        p.toolkit.add_resource('theme/public', 'viewhelpers')
+        p.toolkit.add_resource('public', 'viewhelpers')
 
     def get_helpers(self):
         return {'remove_linebreaks': _remove_linebreaks,
