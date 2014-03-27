@@ -1,6 +1,8 @@
 ckanext-viewhelpers
 ===================
 
+![Build status](https://travis-ci.org/ckan/ckanext-viewhelpers.svg)
+
 This extension adds a few helper methods that are useful for CKAN's views. It
 uses the new Resource View developed in
 https://github.com/ckan/ckan/tree/1251-resource-view.
