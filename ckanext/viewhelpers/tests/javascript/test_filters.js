@@ -80,6 +80,17 @@ describe('ckan.views.viewhelpers.filters', function(){
   });
 
   describe('#get', function(){
+    it('should return all filters if called without params', function(){
+      var expectedFilters = {
+        country: ['Brazil']
+      };
+
+
+      filters._initialize('?filters=country:Brazil');
+
+      assert.deepEqual(expectedFilters, filters.get());
+    });
+
     it('should return the requested filter field', function(){
       var countryFilter;
 
