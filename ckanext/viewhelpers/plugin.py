@@ -10,7 +10,7 @@ class ViewHelpers(p.SingletonPlugin):
 
     def get_helpers(self):
         return {'remove_linebreaks': _remove_linebreaks,
-                'get_filter_values': get_filter_values}
+                'get_filter_values': _get_filter_values}
 
 
 def _remove_linebreaks(string):
@@ -18,7 +18,7 @@ def _remove_linebreaks(string):
     return str(string).replace('\n', '')
 
 
-def get_filter_values(resource):
+def _get_filter_values(resource):
     ''' Tries to get out filter values so they can appear in dropdown list.
     Leaves input as text box when the table is too big or there are too many
     distinct values.  Current limits are 5000 rows in table and 500 distict
