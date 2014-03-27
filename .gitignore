@@ -5,3 +5,4 @@ syntax: glob
 *~
 dist
 build
+node_modules
