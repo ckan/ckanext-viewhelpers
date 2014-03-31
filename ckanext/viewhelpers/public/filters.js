@@ -13,14 +13,12 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
   };
 
   function get(filterName) {
-    if (!api._searchParams.filters) {
-      return;
-    }
+    var filters = api._searchParams.filters || {};
 
     if (filterName) {
-      return api._searchParams.filters[filterName];
+      return filters[filterName];
     } else {
-      return api._searchParams.filters;
+      return filters;
     }
   }
 

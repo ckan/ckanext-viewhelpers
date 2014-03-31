@@ -37,16 +37,11 @@ describe('ckan.views.viewhelpers.filters', function(){
   });
 
   describe('#initialization', function() {
-    it('should start as an empty object', function() {
-      filters._initialize('');
-      assert.equal(undefined, filters.get());
-    });
-
     it('should clear the filters on subsequent calls', function() {
       filters._initialize('?filters=country:Brazil');
       assert.deepEqual(['Brazil'], filters.get('country'));
       filters._initialize('');
-      assert.deepEqual(undefined, filters.get());
+      assert.equal(undefined, filters.get('country'));
     });
 
     it('should work with multiple filters', function() {
@@ -108,6 +103,12 @@ describe('ckan.views.viewhelpers.filters', function(){
 
       assert.equal(1, countryFilter.length);
       assert.equal('Brazil', countryFilter[0]);
+    });
+
+    it('should return an empty object if there\'re no filters', function(){
+      filters._initialize('');
+
+      assert.deepEqual({}, filters.get());
     });
 
     it('should return undefined if there\'s no filter with the requested field', function(){
