@@ -1,6 +1,9 @@
 var requirejs = require('requirejs');
 var chai = requirejs('chai');
 var assert = chai.assert;
+var sinon = requirejs('sinon');
+var jquery = requirejs('jquery');
+var jsdom = requirejs('jsdom');
 
 requirejs.config({
   shim: {
@@ -21,11 +24,9 @@ describe('ckan.views.viewhelpers.filters', function(){
   before(function() {
     var ckan;
 
-    window = {
-      location: {
-        search: ''
-      }
-    };
+    window = jsdom.jsdom().createWindow();
+    document = window.document;
+    $ = jquery.create(window);
 
     ckan = requirejs('ckanext/viewhelpers/public/filters.js');
     filters = ckan.views.viewhelpers.filters;
@@ -38,7 +39,14 @@ describe('ckan.views.viewhelpers.filters', function(){
   describe('#initialization', function() {
     it('should start as an empty object', function() {
       filters._initialize('');
-      assert.deepEqual({}, filters._filters);
+      assert.equal(undefined, filters.get());
+    });
+
+    it('should clear the filters on subsequent calls', function() {
+      filters._initialize('?filters=country:Brazil');
+      assert.deepEqual(['Brazil'], filters.get('country'));
+      filters._initialize('');
+      assert.deepEqual(undefined, filters.get());
     });
 
     it('should work with multiple filters', function() {
@@ -49,7 +57,7 @@ describe('ckan.views.viewhelpers.filters', function(){
 
       filters._initialize('?filters=country:Brazil|state:Paraiba');
 
-      assert.deepEqual(expectedFilters, filters._filters);
+      assert.deepEqual(expectedFilters, filters.get());
     });
 
     it('should work with multiple values for the same filter', function() {
@@ -60,7 +68,7 @@ describe('ckan.views.viewhelpers.filters', function(){
 
       filters._initialize('?filters=country:Brazil|state:Paraiba|country:Argentina');
 
-      assert.deepEqual(expectedFilters, filters._filters);
+      assert.deepEqual(expectedFilters, filters.get());
     });
 
     it('should keep the order defined in the query string', function() {
@@ -72,10 +80,10 @@ describe('ckan.views.viewhelpers.filters', function(){
           };
 
       filters._initialize('?filters=country:Argentina|country:Brazil');
-      assert.deepEqual(expectedFiltersSorted, filters._filters);
+      assert.deepEqual(expectedFiltersSorted, filters.get());
 
       filters._initialize('?filters=country:Brazil|country:Argentina');
-      assert.deepEqual(expectedFiltersReverse, filters._filters);
+      assert.deepEqual(expectedFiltersReverse, filters.get());
     });
   });
 
@@ -109,6 +117,28 @@ describe('ckan.views.viewhelpers.filters', function(){
       cityFilter = filters.get('city');
 
       assert.equal(undefined, cityFilter);
+    });
+  });
+
+  describe('#set', function(){
+    it('should set the filters', function(){
+      var expectedFilters = {
+        country: 'Brazil'
+      };
+
+      filters.set('country', 'Brazil');
+
+      assert.deepEqual(expectedFilters, filters.get());
+    });
+
+    it('should update the url', function(){
+      var expectedSearch = '?filters=country%3ABrazil%7Ccountry%3AArgentina' +
+                           '%7Cindicator%3Ahappiness';
+
+      filters.set('country', ['Brazil', 'Argentina']);
+      filters.set('indicator', 'happiness');
+
+      assert.equal(expectedSearch, window.location.search);
     });
   });
 });

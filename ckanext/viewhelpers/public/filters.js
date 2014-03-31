@@ -7,44 +7,79 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
 
   var api = {
     get: get,
-    _filters: {},
+    set: set,
+    _searchParams: {},
     _initialize: _initialize
   };
 
   function get(filterName) {
-    if (filterName) {
-      return api._filters[filterName];
-    } else {
-      return api._filters;
+    if (!api._searchParams.filters) {
+      return;
     }
+
+    if (filterName) {
+      return api._searchParams.filters[filterName];
+    } else {
+      return api._searchParams.filters;
+    }
+  }
+
+  function set(name, value) {
+    api._searchParams.filters = api._searchParams.filters || {};
+    api._searchParams.filters[name] = value;
+
+    _updateFilters();
+
+    return api;
+  }
+
+  function _updateFilters() {
+    window.location.search = _encodedParams();
+  }
+
+  function _encodedParams() {
+    var params = $.extend({}, api._searchParams);
+
+    if (params.filters) {
+      params.filters = $.map(params.filters, function (fields, filter) {
+        if (!$.isArray(fields)) {
+          fields = [fields];
+        }
+
+        var fieldsStr = $.map(fields, function (field) {
+          return filter + ':' + field;
+        });
+
+        return fieldsStr.join('|');
+      }).join('|');
+    }
+
+    return $.param(params);
   }
 
   function _initialize(queryString) {
     // The filters are in format 'field:value|field:value|field:value'
-    var routeParams = queryString.queryStringToJSON();
+    var searchParams = queryString.queryStringToJSON();
 
-    if (!routeParams || !routeParams.filters) {
-      api._filters = {};
-      return api._filters;
+    if (searchParams.filters) {
+      var filters = {},
+          fieldValuesStr = searchParams.filters.split('|'),
+          i,
+          len;
+
+      for (i = 0, len = fieldValuesStr.length; i < len; i++) {
+        var fieldValue = fieldValuesStr[i].split(':'),
+            field = fieldValue[0],
+            value = fieldValue[1];
+
+        filters[field] = filters[field] || [];
+        filters[field].push(value);
+      }
+
+      searchParams.filters = filters;
     }
 
-    var filters = {},
-        fieldValuesStr = routeParams.filters.split('|'),
-        i,
-        len;
-
-    for (i = 0, len = fieldValuesStr.length; i < len; i++) {
-      var fieldValue = fieldValuesStr[i].split(':'),
-          field = fieldValue[0],
-          value = fieldValue[1];
-
-      filters[field] = filters[field] || [];
-      filters[field].push(value);
-    }
-
-    api._filters = filters;
-
-    return filters;
+    api._searchParams = searchParams;
   }
 
   _initialize(queryString);
