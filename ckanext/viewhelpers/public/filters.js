@@ -8,6 +8,7 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
   var api = {
     get: get,
     set: set,
+    setAndRedirectTo: setAndRedirectTo,
     _searchParams: {},
     _initialize: _initialize
   };
@@ -23,20 +24,34 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
   }
 
   function set(name, value) {
+    var url = window.location.href;
+
+    setAndRedirectTo(name, value, url);
+  }
+
+  function setAndRedirectTo(name, value, url) {
     api._searchParams.filters = api._searchParams.filters || {};
     api._searchParams.filters[name] = value;
 
-    _updateFilters();
+    _redirectTo(url);
 
     return api;
   }
 
-  function _updateFilters() {
-    window.location.search = _encodedParams();
+  function _redirectTo(url) {
+    var urlBase = url.split('?')[0],
+        urlQueryString = url.split('?')[1] || '',
+        defaultParams = urlQueryString.queryStringToJSON(),
+        queryString = _encodedParams(defaultParams),
+        destinationUrl;
+
+    destinationUrl = urlBase + '?' + queryString;
+
+    window.location.href = destinationUrl;
   }
 
-  function _encodedParams() {
-    var params = $.extend({}, api._searchParams);
+  function _encodedParams(defaultParams) {
+    var params = $.extend({}, defaultParams || {}, api._searchParams);
 
     if (params.filters) {
       params.filters = $.map(params.filters, function (fields, filter) {

@@ -139,7 +139,53 @@ describe('ckan.views.viewhelpers.filters', function(){
       filters.set('country', ['Brazil', 'Argentina']);
       filters.set('indicator', 'happiness');
 
-      assert.equal(expectedSearch, window.location.search);
+      assert.include(window.location.href, expectedSearch);
+    });
+  });
+
+  describe('#setAndRedirectTo', function(){
+    it('should set the filters', function(){
+      var url = 'http://www.ckan.org',
+          expectedFilters = {
+            country: 'Brazil'
+          };
+
+      filters.setAndRedirectTo('country', 'Brazil', 'http://www.ckan.org');
+
+      assert.deepEqual(expectedFilters, filters.get());
+    });
+
+    it('should update the url', function(){
+      var url = 'http://www.ckan.org',
+          expectedSearch = '?filters=country%3ABrazil%7Ccountry%3AArgentina' +
+                           '%7Cindicator%3Ahappiness';
+
+      filters.setAndRedirectTo('country', ['Brazil', 'Argentina'], url);
+      filters.setAndRedirectTo('indicator', 'happiness', url);
+
+      assert.include(window.location.href, expectedSearch);
+    });
+
+    it('should keep the original url\'s query params', function(){
+      var url = 'http://www.ckan.org/?id=42',
+          expectedSearch = '?id=42&filters=country%3ABrazil%7Ccountry%3AArgentina' +
+                           '%7Cindicator%3Ahappiness';
+
+      filters.setAndRedirectTo('country', ['Brazil', 'Argentina'], url);
+      filters.setAndRedirectTo('indicator', 'happiness', url);
+
+      assert.include(window.location.href, expectedSearch);
+    });
+
+    it('should override the original url\'s filters', function(){
+      var url = 'http://www.ckan.org/?filters=country%3AEngland%7Cyear%3A2014',
+          expectedSearch = '?filters=country%3ABrazil%7Ccountry%3AArgentina' +
+                           '%7Cindicator%3Ahappiness';
+
+      filters.setAndRedirectTo('country', ['Brazil', 'Argentina'], url);
+      filters.setAndRedirectTo('indicator', 'happiness', url);
+
+      assert.include(window.location.href, expectedSearch);
     });
   });
 });
