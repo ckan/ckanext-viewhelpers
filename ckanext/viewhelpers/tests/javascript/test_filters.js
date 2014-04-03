@@ -188,4 +188,44 @@ describe('ckan.views.viewhelpers.filters', function(){
       assert.include(window.location.href, expectedSearch);
     });
   });
+
+  describe('#unset', function(){
+    it('should unset the filters', function(){
+      var expectedFilters = {};
+      filters.set('country', 'Brazil');
+
+      filters.unset('country', 'Brazil');
+
+      assert.deepEqual(expectedFilters, filters.get());
+    });
+
+    it('should unset the filters when we unset every filter activated', function(){
+      var expectedFilters = {};
+      filters.set('country', ['Brazil', 'Argentina']);
+
+      filters.unset('country', ['Brazil', 'Argentina']);
+
+      assert.deepEqual(expectedFilters, filters.get());
+    });
+
+    it('should work with arrays', function(){
+      var expectedFilters = {
+        country: ['Argentina']
+      };
+      filters.set('country', ['Brazil', 'Argentina', 'Uruguay']);
+
+      filters.unset('country', ['Brazil', 'Uruguay']);
+
+      assert.deepEqual(expectedFilters, filters.get());
+    });
+
+    it('should update the url', function(){
+      var expectedSearch = '?filters=country%3AArgentina';
+      filters.set('country', ['Brazil', 'Argentina']);
+
+      filters.unset('country', 'Brazil');
+
+      assert.include(window.location.href, expectedSearch);
+    });
+  });
 });

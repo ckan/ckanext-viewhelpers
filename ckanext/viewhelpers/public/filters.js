@@ -9,6 +9,7 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
     get: get,
     set: set,
     setAndRedirectTo: setAndRedirectTo,
+    unset: unset,
     _searchParams: {},
     _initialize: _initialize
   };
@@ -34,6 +35,35 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
     api._searchParams.filters[name] = value;
 
     _redirectTo(url);
+
+    return api;
+  }
+
+  function unset(name, value) {
+    var thisFilters = api._searchParams.filters && api._searchParams.filters[name];
+
+    if (thisFilters) {
+      var originalLength = thisFilters.length;
+
+      // value and thisFilters are strings and equal
+      if (thisFilters === value) {
+        delete api._searchParams.filters[name];
+      } else if ($.isArray(thisFilters)) {
+        thisFilters = _removeElementsFromArray(thisFilters, value);
+
+        // if we end up with an empty array, delete the filters param
+        if (thisFilters.length === 0) {
+          delete api._searchParams.filters[name];
+        } else {
+          api._searchParams.filters[name] = thisFilters;
+        }
+      }
+
+      var haveFiltersChanged = (thisFilters.length !== originalLength);
+      if (haveFiltersChanged) {
+        _redirectTo(window.location.href);
+      }
+    }
 
     return api;
   }
@@ -68,6 +98,23 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
     }
 
     return $.param(params);
+  }
+
+  function _removeElementsFromArray(array, elements) {
+    var arrayCopy = array.slice(0);
+
+    if (!$.isArray(elements)) {
+      elements = [elements];
+    }
+
+    for (var i = 0; i < elements.length; i++) {
+      var index = $.inArray(elements[i], arrayCopy);
+      if (index > -1) {
+        arrayCopy.splice(index, 1);
+      }
+    }
+
+    return arrayCopy;
   }
 
   function _initialize(queryString) {
