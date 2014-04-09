@@ -72,6 +72,16 @@ In general, the filters are defined as `Key:Value` pairs separated by `|`
 filters defined on different keys, it works as a logical `AND` (i.e. `Country
 == "Brazil" AND Year == "1990"`).
 
+#### Who's using it?
+
+To see how this is used in real extensions, check
+[ckanext-dashboard](//github.com/ckan/ckanext-dashboard),
+[ckanext-basiccharts](//github.com/ckan/ckanext-basiccharts), and
+[ckanext-mapviews](//github.com/ckan/ckanext-mapviews).
+
+If you have any doubts, the code itself should be relatively easy to follow.
+The JavaScript tests might help as well.
+
 License
 -------
 
