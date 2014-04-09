@@ -82,6 +82,23 @@ To see how this is used in real extensions, check
 If you have any doubts, the code itself should be relatively easy to follow.
 The JavaScript tests might help as well.
 
+### Filters' form
+
+![Filters form](doc/filters_form.png)
+
+When creating your visualization as a CKAN's resource view, you might want to
+allow the user to define default forms. For example, she might want to create
+multiple bar charts on the same resource, each showing a part of the data.
+
+To help you create the form allowing the user to do that, we've created the
+`filters\_form` CKAN module. Currently it's still under heavy development, and
+the Jinja macros used to make it look like the screenshot above weren't moved
+to this repository yet (there's an issue for that at
+[#4](//github.com/ckan/ckanext-viewhelpers/issues/4)).
+
+You can see how it was done in
+[ckanext-basiccharts](https://github.com/ckan/ckanext-basiccharts/blob/master/ckanext/basiccharts/theme/templates/basechart_form.html). If you want (or does) use it on your resource view, please ping me in the aforementioned issue.
+
 License
 -------
 
