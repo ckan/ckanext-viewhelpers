@@ -40,13 +40,13 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
   }
 
   function unset(name, value) {
-    var thisFilters = api._searchParams.filters && api._searchParams.filters[name];
+    var thisFilters = get(name);
 
     if (thisFilters) {
       var originalLength = thisFilters.length;
 
       // value and thisFilters are strings and equal
-      if (thisFilters === value) {
+      if (thisFilters === value || value === undefined) {
         delete api._searchParams.filters[name];
       } else if ($.isArray(thisFilters)) {
         thisFilters = _removeElementsFromArray(thisFilters, value);
@@ -59,7 +59,8 @@ this.ckan.views.viewhelpers.filters = (function (queryString) {
         }
       }
 
-      var haveFiltersChanged = (thisFilters.length !== originalLength);
+      var haveFiltersChanged = (get(name) === undefined ||
+                                get(name).length != originalLength);
       if (haveFiltersChanged) {
         _redirectTo(window.location.href);
       }
