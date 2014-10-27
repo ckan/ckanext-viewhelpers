@@ -22,8 +22,8 @@ Usage
 
 ### Filters
 
-When building a visualization, it's often useful to allow the user to filter
-the data shown, so she can focus on what's more important to her.
+When building a visualization, it's often useful to allow users to filter
+the data shown, so they can focus on what's more important to them.
 
 We defined a filtering scheme inspired on [OpenSpending](//openspending.org).
 First I'll explain how it works, and then I'll point you to examples where you
@@ -87,7 +87,7 @@ The JavaScript tests might help as well.
 ![Filters form](doc/filters_form.png)
 
 When creating your visualization as a CKAN's resource view, you might want to
-allow the user to define default forms. For example, she might want to create
+allow the user to define default forms. For example, a user might want to create
 multiple bar charts on the same resource, each showing a part of the data.
 
 To help you create the form allowing the user to do that, we've created the
