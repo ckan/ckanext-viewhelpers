@@ -15,7 +15,7 @@ class ViewHelpers(p.SingletonPlugin):
 
 def _remove_linebreaks(string):
     '''Convert a string to be usable in JavaScript'''
-    return str(string).replace('\n', '')
+    return unicode(string).replace('\n', '')
 
 
 def _get_filter_values(resource):
